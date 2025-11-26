@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Productos Disponibles</h2>
+        <a href="{% url 'ver_carrito' %}" class="btn btn-primary position-relative">
+            Ver Carrito
+            {% if request.session.carrito %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ request.session.carrito|length }}
+            </span>
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="row">
+        {% for producto in productos %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="text-muted">{{ producto.descripcion|default:"Sin descripción" }}</p>
+                    <h4 class="text-success">${{ producto.precio }}</h4>
+                    
+                    <form method="post" action="{% url 'agregar_al_carrito' producto.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success w-100">Agregar al Carrito</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

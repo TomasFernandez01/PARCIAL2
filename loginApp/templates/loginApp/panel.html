@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Panel de Usuario</h4>
+            </div>
+            <div class="card-body">
+                <h5>¡Bienvenido, {{ user.username }}!</h5>
+                <p>Email: {{ user.email }}</p>
+                <p>Te has unido: {{ user.date_joined|date:"d/m/Y" }}</p>
+                
+                <div class="mt-4">
+                    <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

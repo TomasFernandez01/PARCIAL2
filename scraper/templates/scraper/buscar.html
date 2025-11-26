@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>🔍 Buscador Wikipedia</h4>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" 
+                                   name="q" 
+                                   class="form-control" 
+                                   placeholder="Buscar en Wikipedia (ej: Python, Django, Argentina)..."
+                                   value="{{ query }}"
+                                   required> 
+                           <button type="submit" class="btn btn-primary">Buscar</button>
+                        </div>
+                        <small class="form-text text-muted">
+                            Escribe un tema y presiona Buscar para obtener información de Wikipedia.
+                        </small>
+                    </form>
+
+                    {% if query %}
+                    <div class="alert alert-info">
+                        {% if total_resultados > 0 %}
+                            Se encontró 1 resultado para: <strong>"{{ query }}"</strong>
+                        {% else %}
+                            Buscando: <strong>"{{ query }}"</strong>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% for resultado in resultados %}
+                    <div class="card mb-3 {% if resultado.fuente == 'Error' %}border-danger{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">{{ resultado.titulo }}</h5>
+                                <span class="badge bg-secondary">{{ resultado.fuente }}</span>
+                            </div>
+                            
+                            <p class="card-text">{{ resultado.contenido }}</p>
+                            
+                            {% if resultado.url != '#' %}
+                            <div class="mt-3">
+                                
+                                {% comment %} <a href="{{ resultado.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    📖 Ver artículo completo en Wikipedia
+                                </a> {% endcomment %}
+
+                                <a href="{{ resultado.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    📖 Ver artículo completo en Wikipedia Español
+                                </a>
+
+                            </div>
+                            {% endif %}
+                            
+                            {% if resultado.fuente == 'Error' %}
+                            <div class="mt-2">
+                                <small class="text-muted">Sugerencia: Verifica tu conexión a internet o intenta con otro término de búsqueda.</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if query and total_resultados == 0 %}
+                    <div class="alert alert-warning">
+                        <h5>😕 No se encontraron resultados</h5>
+                        <p>Intenta con estos ejemplos:</p>
+                        <ul>
+                            <li><a href="?q=Python">Python</a></li>
+                            <li><a href="?q=Artificial+intelligence">Artificial intelligence</a></li>
+                            <li><a href="?q=Argentina">Argentina</a></li>
+                            <li><a href="?q=Machine+learning">Machine learning</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

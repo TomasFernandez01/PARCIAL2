@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Lista de Tareas</h2>
+        <a href="{% url 'crear_tarea' %}" class="btn btn-primary">Nueva Tarea</a>
+    </div>
+
+    {% if tareas %}
+    <div class="row">
+        {% for tarea in tareas %}
+        <div class="col-md-6 mb-3">
+            <div class="card {% if tarea.completada %}border-success{% endif %}">
+                <div class="card-body">
+                    <h5 class="card-title {% if tarea.completada %}text-success text-decoration-line-through{% endif %}">
+                        {{ tarea.titulo }}
+                    </h5>
+                    <p class="card-text">{{ tarea.descripcion|truncatewords:20 }}</p>
+                    <p class="text-muted small">Creada: {{ tarea.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                    
+                    <div class="btn-group">
+                        <a href="{% url 'editar_tarea' tarea.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'eliminar_tarea' tarea.id %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No hay tareas creadas. <a href="{% url 'crear_tarea' %}">Crea la primera</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Tu Carrito de Compras</h2>
+        <div>
+            <a href="{% url 'lista_productos' %}" class="btn btn-outline-primary">Seguir Comprando</a>
+            {% if items_carrito %}
+            <form method="post" action="{% url 'vaciar_carrito' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger">Vaciar Carrito</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if items_carrito %}
+    <div class="row">
+        <div class="col-md-8">
+            {% for item in items_carrito %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5>{{ item.producto.nombre }}</h5>
+                            <p class="text-muted mb-0">{{ item.producto.descripcion|default:"Sin descripción" }}</p>
+                        </div>
+                        <div class="text-end">
+                            <p class="mb-1">${{ item.producto.precio }} c/u</p>
+
+
+                            <div class="btn-group">
+
+                                <span class="btn btn-outline-secondary">
+                                    Cantidad: {{ item.cantidad }}
+                                </span>
+                                <a href="{% url 'quitar_del_carrito' item.producto.id %}" class="btn btn-outline-danger">
+                                    -
+                                </a>
+                                <a href="{% url 'sumar_al_carrito' item.producto.id %}" class="btn btn-outline-success">
+                                    +
+                                </a>
+                            </div>
+                            <p class="mt-2 mb-0">
+                                <strong>Subtotal: ${{ item.subtotal }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Resumen del Pedido</h5>
+                </div>
+                <div class="card-body">
+                    <h4 class="text-success">Total: ${{ total }}</h4>
+                    <p class="text-muted">{{ items_carrito|length }} producto(s) en el carrito</p>
+                    <button class="btn btn-success w-100" disabled>Proceder al Pago (Demo)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <h4>🛒 Tu carrito está vacío</h4>
+        <p>¡Agrega algunos productos increíbles!</p>
+        <a href="{% url 'lista_productos' %}" class="btn btn-primary">Ver Productos</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

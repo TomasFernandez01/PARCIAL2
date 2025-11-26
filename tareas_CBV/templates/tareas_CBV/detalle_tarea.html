@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Detalle de Tarea</h2>
+        </div>
+        <div class="card-body">
+            <h3>{{ tarea.titulo }}</h3>
+            <p><strong>Descripción:</strong> {{ tarea.descripcion }}</p>
+            <p><strong>Estado:</strong> {% if tarea.completada %}✅ Completada{% else %}⏳ Pendiente{% endif %}</p>
+            <p><strong>Fecha creación:</strong> {{ tarea.fecha_creacion|date:"d/m/Y H:i" }}</p>
+            
+            <div class="mt-4">
+                <a href="{% url 'editar_tarea_cbv' tarea.pk %}" class="btn btn-primary">Editar</a>
+                <a href="{% url 'eliminar_tarea_cbv' tarea.pk %}" class="btn btn-danger">Eliminar</a>
+                <a href="{% url 'lista_tareas_cbv' %}" class="btn btn-secondary">Volver al Listado</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

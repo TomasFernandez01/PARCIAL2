@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📊 Dashboard de Estadísticas</h2>
+        <div class="btn-group">
+            <a href="?dias=1" class="btn btn-outline-primary {% if dias_filtro == 1 %}active{% endif %}">Hoy</a>
+            <a href="?dias=7" class="btn btn-outline-primary {% if dias_filtro == 7 %}active{% endif %}">7 días</a>
+            <a href="?dias=30" class="btn btn-outline-primary {% if dias_filtro == 30 %}active{% endif %}">30 días</a>
+        </div>
+    </div>
+
+    <!-- Tarjetas de resumen -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Visitas</h5>
+                    <h2 class="display-4">{{ total_visitas }}</h2>
+                    <p class="card-text">Últimos {{ dias_filtro }} días</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Visitas Únicas</h5>
+                    <h2 class="display-4">{{ visitas_unicas }}</h2>
+                    <p class="card-text">Por dirección IP</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Usuarios Registrados</h5>
+                    <h2 class="display-4">{{ usuarios_registrados }}</h2>
+                    <p class="card-text">Sesiones activas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📈 Visitas por Día</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="visitasChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>👥 Visitas por Usuario</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="usuariosChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>🌐 Páginas Más Visitadas</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="paginasChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Gráfico de visitas por día (líneas)
+const visitasCtx = document.getElementById('visitasChart').getContext('2d');
+const visitasChart = new Chart(visitasCtx, {
+    type: 'line',
+    data: {
+        labels: {{ dias_labels|safe }},
+        datasets: [{
+            label: 'Visitas por Día',
+            data: {{ dias_data|safe }},
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1,
+            fill: true,
+            backgroundColor: 'rgba(75, 192, 192, 0.1)'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Gráfico de páginas populares (barras)
+const paginasCtx = document.getElementById('paginasChart').getContext('2d');
+const paginasChart = new Chart(paginasCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ paginas_labels|safe }},
+        datasets: [{
+            label: 'Visitas',
+            data: {{ paginas_data|safe }},
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Gráfico de usuarios (dona)
+const usuariosCtx = document.getElementById('usuariosChart').getContext('2d');
+const usuariosChart = new Chart(usuariosCtx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ usuarios_labels|safe }},
+        datasets: [{
+            data: {{ usuarios_data|safe }},
+            backgroundColor: [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
