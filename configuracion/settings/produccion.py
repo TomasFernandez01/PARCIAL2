@@ -1,7 +1,14 @@
 from .base import *
 import dj_database_url
 
-DEBUG = False
+DEBUG = True
+
+# ALLOWED_HOSTS para Render
+RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default=None)
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, '.onrender.com']
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # PostgreSQL para producción
 DATABASES = {
