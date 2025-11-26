@@ -6,15 +6,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent  # PARCIAL2/
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-clave-temporal-parcial2')
 
-DEBUG = True #config('DEBUG', default=True, cast=bool)
+# DEBUG dinámico (True local, False producción)
+DEBUG = config('DEBUG', default=False, cast=bool)
+#DEBUG = True #config('DEBUG', default=True, cast=bool)
 
-# Detectar Render
+# Hosts para Render
 RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default=None)
-
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, '.onrender.com']
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# BASE DE DATOS (SQLite local, Postgres en Render)
+import dj_database_url
+from decouple import config
+DATABASE_URL = config('DATABASE_URL', default=None)
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=not DEBUG
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -89,14 +110,14 @@ WSGI_APPLICATION = 'configuracion.wsgi.application'
 
 # Base de datos
 
-import dj_database_url
-from decouple import config
+# import dj_database_url
+# from decouple import config
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=config("DATABASE_URL")
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=config("DATABASE_URL")
+#     )
+# }
 
 # DATABASE_URL = config('DATABASE_URL', default=None)
 # if DATABASE_URL:
@@ -136,17 +157,23 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# STATIC & WHITENOISE
 STATIC_URL = '/static/'
-#STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-#STATICFILES_DIRS = [BASE_DIR / 'static']
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-# Render y Whitenoise
-MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")  
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
+# STATIC_URL = '/static/'
+# #STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# #STATICFILES_DIRS = [BASE_DIR / 'static']
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
+
+# Render y Whitenoise 
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files para la app galeria
 MEDIA_URL = '/media/'
