@@ -98,7 +98,6 @@ DATABASES = {
     )
 }
 
-
 # DATABASE_URL = config('DATABASE_URL', default=None)
 # if DATABASE_URL:
 #     import dj_database_url
