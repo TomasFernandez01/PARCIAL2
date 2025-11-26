@@ -6,10 +6,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent  # PARCIAL2/
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-clave-temporal-parcial2')
 
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = True #config('DEBUG', default=True, cast=bool)
 
 # Detectar Render
-RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default=None)
+RENDER_EXTERNAL_HOSTNAME = ['*'] #config('RENDER_EXTERNAL_HOSTNAME', default=None)
 
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, '.onrender.com']
